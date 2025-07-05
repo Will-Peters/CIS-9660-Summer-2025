@@ -43,7 +43,6 @@ with st.form("user_inputs"):
     property_group = st.selectbox("Property Group", list(Property_Group_to_Type.keys()))
 
     property_type = st.selectbox("Property Type", Property_Group_to_Type[property_group])
-])
     Neighbourhood_cleansed = st.selectbox("Neighborhood", borough_to_neighborhoods[borough])
     submitted = st.form_submit_button("Predict")
 
@@ -65,7 +64,7 @@ if submitted:
         "review_scores_checkin": [4.8],
         "review_scores_communication": [4.9],
         "review_scores_location": [4.6],
-        "review_scores_value": [4.4],
+        "review_scores_value": [4.4]
     })
 
     input_transformed = preprocessor.transform(input_df)
