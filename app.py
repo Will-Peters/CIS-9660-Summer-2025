@@ -72,7 +72,7 @@ if submitted:
     prediction = np.expm1(log_price_pred)
     st.success(f"Estimated Rental Price: ${prediction * 0.9:.2f} – ${prediction * 1.1:.2f}")
 st.markdown("____________________________________________________________________________________________________")
-st.markdown(### 📊 Map Visualization")
+st.markdown("### 📊 Map Visualization")
 st.markdown("____________________________________________________________________________________________________")
 df_cleaned = pd.read_pickle("enriched_df.pkl")
 
