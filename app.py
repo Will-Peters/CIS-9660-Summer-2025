@@ -67,5 +67,6 @@ if submitted:
         "review_scores_value": [4.4]
     })
 
-    prediction = model.predict(input_df)[0]
+    log_price_pred = model.predict(input_df)[0]
+    prediction = np.expm1(log_price_pred)
     st.success(f"Estimated Rental Price: ${prediction:.2f}")
