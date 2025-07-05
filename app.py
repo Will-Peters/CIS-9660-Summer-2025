@@ -3,6 +3,7 @@ import pandas as pd
 import joblib
 import numpy as np
 import matplotlib.pyplot as plt
+import pydeck as pdk
 
 # Load model and preprocessor
 model = joblib.load("model.pkl")
@@ -69,4 +70,45 @@ if submitted:
 
     log_price_pred = model.predict(input_df)[0]
     prediction = np.expm1(log_price_pred)
-    st.success(f"Estimated Rental Price: ${prediction:.2f}")
+    st.success(f"Estimated Rental Price: ${prediction * 0.9:.2f} – ${prediction * 1.1:.2f}")
+st.markdown("____________________________________________________________________________________________________")
+st.markdown(### 📊 Map Visualization")
+st.markdown("____________________________________________________________________________________________________")
+df_cleaned = pd.read_pickle("enriched_df.pkl")
+
+    selected_beds = st.slider("Filter by number of beds", min_value=0, max_value=5, value=1)
+
+    # Filter and aggregate
+    filtered_df = df_cleaned[df_cleaned['beds'] == selected_beds]
+    avg_price_df = (
+    filtered_df.
+    groupby('neighbourhood_cleansed', as_index=False)
+    .agg(avg_price=('price', 'mean'),
+         lat=('latitude', 'mean')
+         lon=('longitude', mean')
+)
+
+# Create pydeck map
+layer = pdk.Layer(
+    "ScatterplotLayer",
+    data=avg_price_df,
+    get_position='[lon, lat]',
+    get_color='[255, 0, 0, 160]',
+    get_radius="avg_price * 10",  # Scale bubbles by price
+    pickable=True
+)
+
+view_state = pdk.ViewState(
+    latitude=40.7128,
+    longitude=-74.0060,
+    zoom=10,
+    pitch=0
+)
+
+st.pydeck_chart(pdk.Deck(
+    map_style='mapbox://styles/mapbox/light-v9',
+    initial_view_state=view_state,
+    layers=[layer],
+    tooltip={"text": "{neighbourhood_cleansed}\nAvg Price: ${avg_price}"}
+))
+
