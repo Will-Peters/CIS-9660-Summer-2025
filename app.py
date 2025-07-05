@@ -93,6 +93,8 @@ avg_price_df = (
     )
 )
 
+avg_price_df["avg_price"] = avg_price_df["avg_price"].round(0)
+
 # Create pydeck map
 
 text_layer = pdk.Layer(
@@ -126,6 +128,6 @@ st.pydeck_chart(pdk.Deck(
     map_style='mapbox://styles/mapbox/streets-v11',
     initial_view_state=view_state,
     layers=[layer],
-    tooltip={"text": f"{neighbourhood_cleansed}\nAvg Price: ${avg_price:.0f}"}
+    tooltip={"text": "{neighbourhood_cleansed}\nAvg Price: ${avg_price}"}
 ))
 
