@@ -92,6 +92,18 @@ avg_price_df = (
 )
 
 # Create pydeck map
+
+text_layer = pdk.Layer(
+    "TextLayer",
+    data=avg_price_df,
+    get_position='[lon, lat]',
+    get_text='avg_price',
+    get_size=16,
+    get_color=[0, 0, 0],  # black text
+    get_angle=0,
+    pickable=False
+)
+
 layer = pdk.Layer(
     "ScatterplotLayer",
     data=avg_price_df,
@@ -109,7 +121,7 @@ view_state = pdk.ViewState(
 )
 
 st.pydeck_chart(pdk.Deck(
-    map_style='mapbox://styles/mapbox/light-v9',
+    map_style='mapbox://styles/mapbox/streets-v11',
     initial_view_state=view_state,
     layers=[layer],
     tooltip={"text": "{neighbourhood_cleansed}\nAvg Price: ${avg_price}"}
