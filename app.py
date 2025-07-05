@@ -67,6 +67,5 @@ if submitted:
         "review_scores_value": [4.4]
     })
 
-    input_transformed = preprocessor.transform(input_df)
-    prediction = model.predict(input_transformed)[0]
+    prediction = model.predict(input_df)[0]
     st.success(f"Estimated Rental Price: ${prediction:.2f}")
