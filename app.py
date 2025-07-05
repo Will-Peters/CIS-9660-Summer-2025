@@ -23,10 +23,10 @@ borough_to_neighborhoods = {
 }
 
 Property_Group_to_Type = {
-    "Entire Space": ["Boat","Entire condo","Entire guest suite","Entire guesthouse","Entire home","Entire loft","Entire place","Entire rental unit","Entire serviced apartment","Entire townhouse"],
-    "Private Space": ["Private room","Private room in bed and breakfast","Private room in condo","Private room in guest suite","Private room in guesthouse","Private room in home","Private room in loft","Private room in rental unit","Private room in townhouse"],
-    "Room": ["Room in aparthotel","Room in boutique hotel"],
-    "Shared Room": ["Shared room in home","Shared room in loft","Shared room in rental unit"]
+    "Entire home/apt": ["Boat","Entire condo","Entire guest suite","Entire guesthouse","Entire home","Entire loft","Entire place","Entire rental unit","Entire serviced apartment","Entire townhouse"],
+    "Private room": ["Private room","Private room in bed and breakfast","Private room in condo","Private room in guest suite","Private room in guesthouse","Private room in home","Private room in loft","Private room in rental unit","Private room in townhouse"],
+    "Hotel room": ["Room in aparthotel","Room in boutique hotel"],
+    "Shared room": ["Shared room in home","Shared room in loft","Shared room in rental unit"]
 }
 
 
@@ -34,8 +34,8 @@ Property_Group_to_Type = {
 
 Neighbourhood = st.selectbox("Borough", list(borough_to_neighborhoods.keys()))
 Neighbourhood_cleansed = st.selectbox("Neighborhood", borough_to_neighborhoods[Neighbourhood])  
-property_group = st.selectbox("Property Group", list(Property_Group_to_Type.keys()))
-property_type = st.selectbox("Property Type", Property_Group_to_Type[property_group])
+room_type = st.selectbox("Room Group", list(Property_Group_to_Type.keys()))
+room_detail = st.selectbox("Room detail", Property_Group_to_Type[room_type])
 
 with st.form("user_inputs"):
     bedrooms = st.slider("Bedrooms", 0, 5, 1)
