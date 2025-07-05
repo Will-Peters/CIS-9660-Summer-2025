@@ -85,7 +85,7 @@ df_cleaned = pd.read_pickle("enriched_df.pkl")
     groupby('neighbourhood_cleansed', as_index=False)
     .agg(avg_price=('price', 'mean'),
          lat=('latitude', 'mean')
-         lon=('longitude', mean')
+         lon=('longitude', 'mean')
 )
 
 # Create pydeck map
