@@ -76,15 +76,17 @@ st.markdown("### 📊 Map Visualization")
 st.markdown("____________________________________________________________________________________________________")
 df_cleaned = pd.read_pickle("enriched_df.pkl")
 
-    selected_beds = st.slider("Filter by number of beds", min_value=0, max_value=5, value=1)
+selected_beds = st.slider("Filter by number of beds", min_value=0, max_value=5, value=1)
 
-    # Filter and aggregate
-    filtered_df = df_cleaned[df_cleaned['beds'] == selected_beds]
-    avg_price_df = (
+# Filter and aggregate
+filtered_df = df_cleaned[df_cleaned['beds'] == selected_beds]
+
+avg_price_df = (
     filtered_df.
     groupby('neighbourhood_cleansed', as_index=False)
-    .agg(avg_price=('price', 'mean'),
-         lat=('latitude', 'mean')
+    .agg(
+         avg_price=('price', 'mean'),
+         lat=('latitude', 'mean'),
          lon=('longitude', 'mean')
 )
 
