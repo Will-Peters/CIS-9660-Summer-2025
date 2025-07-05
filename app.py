@@ -4,6 +4,8 @@ import joblib
 import numpy as np
 import matplotlib.pyplot as plt
 import pydeck as pdk
+import os
+os.environ["MAPBOX_API_KEY"] = "pk.eyJ1Ijoid2lsbGlhbXAzMSIsImEiOiJjbWNxc2w5Mmcwa2tyMmpxMTB3aGxnOHg1In0.jHfWqLwGh_sFRuObzNtA1g"
 
 # Load model and preprocessor
 model = joblib.load("model.pkl")
@@ -124,6 +126,6 @@ st.pydeck_chart(pdk.Deck(
     map_style='mapbox://styles/mapbox/streets-v11',
     initial_view_state=view_state,
     layers=[layer],
-    tooltip={"text": "{neighbourhood_cleansed}\nAvg Price: ${avg_price}"}
+    tooltip={"text": "{neighbourhood_cleansed}\nAvg Price: ${avg_price:.0f}"}
 ))
 
