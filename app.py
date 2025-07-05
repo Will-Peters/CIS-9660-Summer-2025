@@ -4,91 +4,70 @@ import joblib
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Load trained model and preprocessor
-model = joblib.load("model.pkl")  # Your final trained model (e.g., XGBoost)
-preprocessor = joblib.load("preprocessor.pkl")  # Preprocessing pipeline
+# Load model and preprocessor
+model = joblib.load("model.pkl")
+preprocessor = joblib.load("preprocessor.pkl")
 
-# Page setup
 st.set_page_config(page_title="SmartRent Finder", layout="wide")
-st.title("🏙️ SmartRent Finder: NYC Rental Price Estimator")
+st.title("🌉 NYC Rent Price Predictor")
 st.markdown("""
-Welcome to **SmartRent Finder**, an AI-powered web app that predicts rental prices for Airbnb listings in New York City.
-
-This tool considers **property features** like number of bedrooms, room type, host quality, and real-time **commute time** to Times Square using Google Maps API.
-
-Use the sidebar to input property details and see real-time rental price predictions and insights. Ideal for:
-- **Renters** optimizing commute vs cost
-- **Hosts** setting competitive prices
-- **Investors** evaluating rental income potential
+Enter apartment features to estimate rental price and evaluate commute time to Times Square.
 """)
 
-# Sidebar inputs
-st.sidebar.header("🔧 Property Input")
-with st.sidebar.form("property_form"):
-    bedrooms = st.slider("Number of Bedrooms", 0, 5, 1)
-    beds = st.slider("Number of Beds", 0, 5, 1)
-    room_type = st.selectbox("Room Type", ["Entire home/apt", "Private room", "Shared room"])
-    superhost = st.selectbox("Is the Host a Superhost?", ["Yes", "No"])
-    neighbourhood = st.selectbox("Neighbourhood Group", ["Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island"])
-    drive_duration = st.number_input("Drive Duration to Times Square (in seconds)", min_value=0, max_value=7200, value=1200)
-    submit_button = st.form_submit_button(label="💡 Predict Price")
+borough_to_neighborhoods = {
+    "Manhattan": ["Battery Park City", "Central Park", "Chelsea", "Chinatown", "East Harlem", "East Village", "Financial District", "Greenwich Village", "Harlem", "Hell's Kitchen", "Inwood", "Lower East Side", "Morningside Heights", "SoHo", "Tribeca", "Upper East Side", "Upper West Side", "Washington Heights", "West Village"],
+    "Brooklyn": ["Bedford-Stuyvesant", "Boerum Hill", "Brooklyn Heights", "Bushwick", "Canarsie", "Carroll Gardens", "Clinton Hill", "Cobble Hill", "Crown Heights", "Cypress Hills", "Downtown Brooklyn", "DUMBO", "East Flatbush", "Flatbush", "Flatlands", "Fort Greene", "Gowanus", "Gravesend", "Greenpoint", "Park Slope", "Prospect Heights", "Prospect-Lefferts Gardens", "Red Hook", "South Slope", "Sunset Park", "Williamsburg", "Windsor Terrace"],
+    "Queens": ["Astoria", "Bayside", "Ditmars Steinway", "East Elmhurst", "Elmhurst", "Flushing", "Forest Hills", "Jackson Heights", "Jamaica", "Kew Gardens", "Long Island City", "Queens Village", "Rego Park", "Richmond Hill", "Ridgewood", "Rockaway Beach", "Sunnyside", "Woodhaven", "Woodside"],
+    "Bronx": ["Allerton", "Bronx Park", "Bronxdale", "City Island", "Concourse", "Eastchester", "Fordham", "Kingsbridge", "Melrose", "Mott Haven", "Parkchester", "Riverdale", "Soundview", "Spuyten Duyvil", "University Heights", "Wakefield", "Williamsbridge"],
+    "Staten Island": ["Arrochar", "Concord", "New Springville", "Shore Acres", "St. George", "Tompkinsville"]
+}
 
-# Real-time prediction
-if submit_button:
+Property_Group_to_Type = {
+    "Entire Space": ["Boat","Entire condo","Entire guest suite","Entire guesthouse","Entire home","Entire loft","Entire place","Entire rental unit","Entire serviced apartment","Entire townhouse"],
+    "Private Space": ["Private room","Private room in bed and breakfast","Private room in condo","Private room in guest suite","Private room in guesthouse","Private room in home","Private room in loft","Private room in rental unit","Private room in townhouse"],
+    "Room": ["Room in aparthotel","Room in boutique hotel"],
+    "Shared Room": ["Shared room in home","Shared room in loft","Shared room in rental unit"]
+}
+
+
+# User input form
+with st.form("user_inputs"):
+    bedrooms = st.slider("Bedrooms", 0, 5, 1)
+    beds = st.slider("Beds", 0, 5, 1)
+    room_type = st.selectbox("Room Type", ["Entire home/apt", "Private room", "Shared room"])
+    superhost = st.selectbox("Is the host a Superhost?", ["Yes", "No"])
+    Neighbourhood = st.selectbox("Borough", list(borough_to_neighborhoods.keys()))
+    drive_duration = st.number_input("Drive Duration to Times Square (minutes)", 0, 120, 20) * 60
+    drive_distance_km = st.number_input("Drive Distance to Times Square (kilometers)", 0, 20, 2)
+    transit_duration = st.number_input("Transit Duration to Times Square (minutes)", 0, 120, 20) * 60
+    property_group = st.selectbox("Property Group", list(Property_Group_to_Type.keys()))
+
+    property_type = st.selectbox("Property Type", Property_Group_to_Type[property_group])
+])
+    Neighbourhood_cleansed = st.selectbox("Neighborhood", borough_to_neighborhoods[borough])
+    submitted = st.form_submit_button("Predict")
+
+if submitted:
     input_df = pd.DataFrame({
         "bedrooms": [bedrooms],
         "beds": [beds],
         "room_type": [room_type],
         "host_is_superhost": [superhost],
         "neighbourhood_group_cleansed": [neighbourhood],
-        "drive_duration": [drive_duration]
+        "drive_duration": [drive_duration],
+        "drive_distance_km": [drive_distance_km],
+        "transit_duration": [transit_duration],
+        "property_type": [property_type],
+        "neighbourhood_cleansed": [neighbourhood_cleansed],
+        "review_scores_rating": [4.7],
+        "review_scores_accuracy": [4.5],
+        "review_scores_cleanliness": [4.6],
+        "review_scores_checkin": [4.8],
+        "review_scores_communication": [4.9],
+        "review_scores_location": [4.6],
+        "review_scores_value": [4.4],
     })
 
-    # Preprocess and predict
-    X_input = preprocessor.transform(input_df)
-    prediction = model.predict(X_input)[0]
-
-    st.success(f"💲 Predicted Rental Price: **${prediction:.2f}**")
-
-    # Optional: Simulate a confidence interval (naïve bootstrapping logic or ±10% range)
-    lower = prediction * 0.9
-    upper = prediction * 1.1
-    st.write(f"📈 Estimated Price Range: ${lower:.2f} - ${upper:.2f}")
-
-# Tabs for insights and performance
-tab1, tab2 = st.tabs(["📊 Model Performance", "📈 Data Exploration"])
-
-with tab1:
-    st.subheader("Model Metrics")
-    st.markdown("- **R² Score**: Measures how well the model explains variance.")
-    st.markdown("- **RMSE / MAE**: Measures accuracy of the predictions.")
-    # Add example metrics (replace with actual values or load from file)
-    st.metric("R² Score", "0.82")
-    st.metric("RMSE", "$35.45")
-    st.metric("MAE", "$26.12")
-
-    # Placeholder for performance visualizations
-    st.markdown("### Residual Plot (Example)")
-    x = np.random.normal(0, 1, 100)
-    y = x + np.random.normal(0, 0.5, 100)
-    residuals = y - x
-    fig, ax = plt.subplots()
-    ax.scatter(x, residuals)
-    ax.axhline(0, color='red', linestyle='--')
-    ax.set_title("Residual Plot")
-    st.pyplot(fig)
-
-with tab2:
-    st.subheader("Feature Impact and Distributions")
-    st.markdown("Explore how different features affect the rental price.")
-
-    st.markdown("#### Example Price Distribution (Simulated)")
-    sim_prices = np.random.normal(loc=150, scale=30, size=1000)
-    fig2, ax2 = plt.subplots()
-    ax2.hist(sim_prices, bins=30, color='skyblue', edgecolor='black')
-    ax2.set_title("Rental Price Distribution")
-    st.pyplot(fig2)
-
-# Footer
-st.markdown("---")
-st.markdown("Built for **CIS 9660 - Regression AI Agent Project** | 📅 Deadline: Aug 13, 2025")
+    input_transformed = preprocessor.transform(input_df)
+    prediction = model.predict(input_transformed)[0]
+    st.success(f"Estimated Rental Price: ${prediction:.2f}")
