@@ -31,17 +31,19 @@ Property_Group_to_Type = {
 
 
 # User input form
+
+Neighbourhood = st.selectbox("Borough", list(borough_to_neighborhoods.keys()))
+Neighbourhood_cleansed = st.selectbox("Neighborhood", borough_to_neighborhoods[Neighbourhood])  
+property_group = st.selectbox("Property Group", list(Property_Group_to_Type.keys()))
+property_type = st.selectbox("Property Type", Property_Group_to_Type[property_group])
+
 with st.form("user_inputs"):
     bedrooms = st.slider("Bedrooms", 0, 5, 1)
     beds = st.slider("Beds", 0, 5, 1)
     superhost = st.selectbox("Is the host a Superhost?", ["Yes", "No"])
-    Neighbourhood = st.selectbox("Borough", list(borough_to_neighborhoods.keys()))
-    Neighbourhood_cleansed = st.selectbox("Neighborhood", borough_to_neighborhoods[Neighbourhood])    
     drive_duration = st.number_input("Drive Duration to Times Square (minutes)", 0, 120, 20) * 60
     drive_distance_km = st.number_input("Drive Distance to Times Square (kilometers)", 0, 20, 2)
     transit_duration = st.number_input("Transit Duration to Times Square (minutes)", 0, 120, 20) * 60
-    property_group = st.selectbox("Property Group", list(Property_Group_to_Type.keys()))
-    property_type = st.selectbox("Property Type", Property_Group_to_Type[property_group])
     submitted = st.form_submit_button("Predict")
 
 if submitted:
