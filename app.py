@@ -88,6 +88,7 @@ avg_price_df = (
          avg_price=('price', 'mean'),
          lat=('latitude', 'mean'),
          lon=('longitude', 'mean')
+    )
 )
 
 # Create pydeck map
