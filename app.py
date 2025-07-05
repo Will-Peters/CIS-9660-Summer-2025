@@ -56,7 +56,7 @@ if submitted:
         "drive_duration": [drive_duration],
         "drive_distance_km": [drive_distance_km],
         "transit_duration": [transit_duration],
-        "property_type": [property_type],
+        "property_type": [room_detail],
         "neighbourhood_cleansed": [Neighbourhood_cleansed],
         "review_scores_rating": [4.7],
         "review_scores_accuracy": [4.5],
