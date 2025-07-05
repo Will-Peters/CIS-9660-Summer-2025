@@ -111,7 +111,7 @@ layer = pdk.Layer(
     data=avg_price_df,
     get_position='[lon, lat]',
     get_color='[255, 0, 0, 160]',
-    get_radius="avg_price * 10",  # Scale bubbles by price
+    get_radius="avg_price * 2",  # Scale bubbles by price
     pickable=True
 )
 
@@ -126,6 +126,6 @@ st.pydeck_chart(pdk.Deck(
     map_style='mapbox://styles/mapbox/streets-v11',
     initial_view_state=view_state,
     layers=[layer],
-    tooltip={"text": "{neighbourhood_cleansed}\nAvg Price: ${avg_price:.0f}"}
+    tooltip={"text": f"{neighbourhood_cleansed}\nAvg Price: ${avg_price:.0f}"}
 ))
 
