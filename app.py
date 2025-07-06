@@ -44,9 +44,6 @@ with st.form("user_inputs"):
     bedrooms = st.slider("Bedrooms", 0, 5, 1)
     beds = st.slider("Beds", 0, 5, 1)
     superhost = st.selectbox("Is the host a Superhost?", ["Yes", "No"])
-    drive_duration = st.number_input("Drive Duration to Times Square (minutes)", 0, 120, 20) * 60
-    drive_distance_km = st.number_input("Drive Distance to Times Square (kilometers)", 0, 20, 2)
-    transit_duration = st.number_input("Transit Duration to Times Square (minutes)", 0, 120, 20) * 60
     submitted = st.form_submit_button("Predict")
 
 if submitted:
@@ -56,9 +53,6 @@ if submitted:
         "room_type": [room_type],
         "host_is_superhost": [superhost],
         "neighbourhood_group_cleansed": [Neighbourhood],
-        "drive_duration": [drive_duration],
-        "drive_distance_km": [drive_distance_km],
-        "transit_duration": [transit_duration],
         "property_type": [room_detail],
         "neighbourhood_cleansed": [Neighbourhood_cleansed],
         "review_scores_rating": [4.7],
