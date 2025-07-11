@@ -11,7 +11,7 @@ os.environ["MAPBOX_API_KEY"] = "pk.eyJ1Ijoid2lsbGlhbXAzMSIsImEiOiJjbWNxc2w5Mmcwa
 rent_model = joblib.load("Regression_model.pkl")
 rent_preprocessor = joblib.load("preprocessor.pkl")
 attrition_model = joblib.load("attrition_model.pkl")
-rent_preprocessor = joblib.load("attrition_preprocessor.pkl")
+attrition_preprocessor = joblib.load("attrition_preprocessor.pkl")
 
 st.set_page_config(page_title="AI Decision App", layout="wide")
 
