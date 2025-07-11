@@ -71,7 +71,7 @@ with tab1:
             "review_scores_value": [4.4]
         })
 
-        log_price_pred = model.predict(input_df)[0]
+        log_price_pred = rent_model.predict(input_df)[0]
         prediction = np.expm1(log_price_pred)
         st.success(f"Estimated Rental Price: ${prediction * 0.9:.2f} – ${prediction * 1.1:.2f}")
     st.markdown("____________________________________________________________________________________________________")
@@ -137,22 +137,55 @@ with tab2:
     st.markdown("Predict whether an employee is likely to leave the company.")
 
     # Example form inputs (adjust based on your dataset)
-    with st.form("attrition_form"):
+    with st.form("attrition_form"): 
         age = st.slider("Age", 18, 60, 30)
-        years_at_company = st.slider("Years at Company", 0, 40, 5)
+        business_travel = st.selectbox("Business Travel", ["Non-Travel", "Travel_Rarely", "Travel_Frequently"])
+        distance_from_home = st.slider("Distance from Home (miles)", 0, 50, 10)
+        education = st.selectbox("Education Level", [1, 2, 3, 4, 5])  # 1='Below College', 5='Doctor'
+        gender = st.selectbox("Gender", ["Male", "Female"])
+        job_involvement = st.selectbox("Job Involvement", [1, 2, 3, 4])
+        job_level = st.selectbox("Job Level", [1, 2, 3, 4, 5])
+        job_role = st.selectbox("Job Role", [
+            "Sales Executive", "Research Scientist", "Laboratory Technician", "Manufacturing Director",
+            "Healthcare Representative", "Manager", "Sales Representative", "Research Director", "Human Resources"
+        ])
         job_satisfaction = st.selectbox("Job Satisfaction", [1, 2, 3, 4])
-        distance_from_home = st.slider("Distance from Home (miles)", 1, 50, 10)
+        marital_status = st.selectbox("Marital Status", ["Single", "Married", "Divorced"])
         monthly_income = st.slider("Monthly Income", 1000, 20000, 5000)
+        num_companies_worked = st.slider("Number of Companies Worked", 0, 10, 1)
+        percent_salary_hike = st.slider("Percent Salary Hike", 10, 25, 15)
+        performance_rating = st.selectbox("Performance Rating", [1, 2, 3, 4])
+        relationship_satisfaction = st.selectbox("Relationship Satisfaction", [1, 2, 3, 4])
+        work_life_balance = st.selectbox("Work-Life Balance", [1, 2, 3, 4])
+        years_at_company = st.slider("Years at Company", 0, 40, 5)
+        years_in_current_role = st.slider("Years in Current Role", 0, 20, 4)
+        years_since_last_promotion = st.slider("Years Since Last Promotion", 0, 15, 2)
+        years_with_curr_manager = st.slider("Years with Current Manager", 0, 17, 3)
 
         submitted = st.form_submit_button("Predict Attrition")
 
     if submitted:
         input_df = pd.DataFrame({
             "Age": [age],
-            "YearsAtCompany": [years_at_company],
-            "JobSatisfaction": [job_satisfaction],
+            "BusinessTravel": [business_travel],
             "DistanceFromHome": [distance_from_home],
-            "MonthlyIncome": [monthly_income]
+            "Education": [education],
+            "Gender": [gender],
+            "JobInvolvement": [job_involvement],
+            "JobLevel": [job_level],
+            "JobRole": [job_role],
+            "JobSatisfaction": [job_satisfaction],
+            "MaritalStatus": [marital_status],
+            "MonthlyIncome": [monthly_income],
+            "NumCompaniesWorked": [num_companies_worked],
+            "PercentSalaryHike": [percent_salary_hike],
+            "PerformanceRating": [performance_rating],
+            "RelationshipSatisfaction": [relationship_satisfaction],
+            "WorkLifeBalance": [work_life_balance],
+            "YearsAtCompany": [years_at_company],
+            "YearsInCurrentRole": [years_in_current_role],
+            "YearsSinceLastPromotion": [years_since_last_promotion],
+            "YearsWithCurrManager": [years_with_curr_manager]
         })
 
         input_processed = attrition_preprocessor.transform(input_df)
