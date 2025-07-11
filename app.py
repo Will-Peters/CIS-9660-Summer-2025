@@ -8,10 +8,9 @@ import os
 os.environ["MAPBOX_API_KEY"] = "pk.eyJ1Ijoid2lsbGlhbXAzMSIsImEiOiJjbWNxc2w5Mmcwa2tyMmpxMTB3aGxnOHg1In0.jHfWqLwGh_sFRuObzNtA1g"
 
 # Load model and preprocessor
-rent_model = joblib.load("model.pkl")
+rent_model = joblib.load("Regression_model.pkl")
 rent_preprocessor = joblib.load("preprocessor.pkl")
-attrition_model = joblib.load("attrition_model.pkl")
-attrition_preprocessor = joblib.load("attrition_preprocessor.pkl")
+attrition_model = joblib.load("Classification_model.pkl")
 
 st.set_page_config(page_title="AI Decision App", layout="wide")
 
