@@ -79,7 +79,8 @@ with tab1:
 
         log_price_pred = rent_model.predict(input_df)[0]
         prediction = np.expm1(log_price_pred)
-        st.success(f"Estimated Rental Price: ${prediction * 0.9:.2f} – ${prediction * 1.1:.2f}")
+        st.success(f"Estimated Rental Price: ${prediction:.2f} \n (Range: ${prediction * 0.9:.2f} – ${prediction * 1.1:.2f})")
+    
     st.markdown("____________________________________________________________________________________________________")
     st.markdown("### 📊 Map Visualization")
     st.markdown("____________________________________________________________________________________________________")
