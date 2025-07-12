@@ -147,7 +147,7 @@ with tab1:
     ))
 
 with tab2:
-    xgb_model = joblib.load("xgb_model.pkl")
+    xgb_model = joblib.load("Regression_model.pkl")
     X_test = joblib.load("X_test.pkl")
     y_test = joblib.load("y_test.pkl")
 
