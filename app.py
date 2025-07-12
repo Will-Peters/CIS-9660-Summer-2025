@@ -171,12 +171,11 @@ with tab2:
     bins = pd.cut(y_pred, bins=np.linspace(min(y_pred), max(y_pred), 10))
     std_by_bin = residuals.groupby(bins).std()
 
-    # Plot
     fig, ax = plt.subplots()
-    std_by_bin.plot(kind='bar', ax=ax, color='cornflowerblue', edgecolor='black')
-    ax.set_title("Standard Deviation of Residuals by Predicted Price Bin")
-    ax.set_xlabel("Predicted Price Range")
-    ax.set_ylabel("Residual Std. Deviation")
+    ax.hist(y_pred, bins=10, color='mediumseagreen', edgecolor='black', alpha=0.7)
+    ax.set_title("Frequency of Predictions by Price Bin")
+    ax.set_xlabel("Predicted Price")
+    ax.set_ylabel("Frequency")
     st.pyplot(fig)
         
 with tab3:
