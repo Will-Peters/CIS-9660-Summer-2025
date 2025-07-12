@@ -50,7 +50,7 @@ with tab1:
     with st.form("user_inputs"):
         bedrooms = st.slider("Bedrooms", 0, 5, 1)
         beds = st.slider("Beds", 0, 5, 1)
-        accomodates = st.slider("Number of People", 0, 10, 1)
+        accommodates = st.slider("Number of People", 0, 10, 1)
         Availability = st.slider("Number of days available", 0, 365, 1)
         superhost = st.selectbox("Is the host a Superhost?", ["Yes", "No"])
         bathrooms = st.slider("Bathrooms", 0, 5, 1)
@@ -73,7 +73,7 @@ with tab1:
             "review_scores_location": [4.6],
             "review_scores_value": [4.4],
             "bathrooms": [bathrooms],
-            "accomodates": [accomodates],
+            "accommodates": [accommodates],
             "availability_365_%": [Availability],
         })
 
