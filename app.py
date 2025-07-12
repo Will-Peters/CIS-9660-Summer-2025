@@ -167,22 +167,19 @@ with tab2:
     st.metric("MAE", f"{mae:.2f}")
     st.metric("Residual Std. Dev", f"{std_resid:.2f}")
 
-    std = np.std(residuals)
-    mean_resid = np.mean(residuals)
+    residuals = y_test - y_pred
+    bins = pd.cut(y_pred, bins=np.linspace(min(y_pred), max(y_pred), 10))
+    std_by_bin = residuals.groupby(bins).std()
 
+    # Plot
     fig, ax = plt.subplots()
-    ax.hist(residuals, bins=30, color="skyblue", edgecolor="black", alpha=0.7)
-    ax.axvline(mean_resid, color='black', linestyle='--', label='Mean Residual')
-    for i in range(1, 4):
-        ax.axvline(mean_resid + i*std, color='red', linestyle='--', alpha=0.6, label=f'+{i}σ' if i == 1 else "")
-        ax.axvline(mean_resid - i*std, color='red', linestyle='--', alpha=0.6, label=f'-{i}σ' if i == 1 else "")
-    ax.set_title("Histogram of Residuals with Std Dev Bands")
-    ax.set_xlabel("Residuals")
-    ax.set_ylabel("Frequency")
-    ax.legend()
+    std_by_bin.plot(kind='bar', ax=ax, color='cornflowerblue', edgecolor='black')
+    ax.set_title("Standard Deviation of Residuals by Predicted Price Bin")
+    ax.set_xlabel("Predicted Price Range")
+    ax.set_ylabel("Residual Std. Deviation")
     st.pyplot(fig)
-    
-    
+        
+with tab3:
     st.title("🧑‍💼 Employee Attrition Classifier")
     st.markdown("Predict whether an employee is likely to leave the company.")
 
