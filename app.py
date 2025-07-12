@@ -50,7 +50,10 @@ with tab1:
     with st.form("user_inputs"):
         bedrooms = st.slider("Bedrooms", 0, 5, 1)
         beds = st.slider("Beds", 0, 5, 1)
+        accomodates = st.slider("Number of People", 0, 10, 1)
+        Availability = st.slider("Number of days available", 0, 365, 1)
         superhost = st.selectbox("Is the host a Superhost?", ["Yes", "No"])
+        bathrooms = st.slider("Bathrooms", 0, 5, 1)
         submitted = st.form_submit_button("Predict")
 
     if submitted:
@@ -68,7 +71,10 @@ with tab1:
             "review_scores_checkin": [4.8],
             "review_scores_communication": [4.9],
             "review_scores_location": [4.6],
-            "review_scores_value": [4.4]
+            "review_scores_value": [4.4],
+            "bathrooms": [bathrooms],
+            "accomodates": [accomodates],
+            "availability_365_%": [Availability],
         })
 
         log_price_pred = rent_model.predict(input_df)[0]
@@ -192,4 +198,4 @@ with tab2:
         prediction = attrition_model.predict(input_processed)[0]
         probability = attrition_model.predict_proba(input_processed)[0][1]
 
-        st.success(f"Prediction: {'Leave' if prediction == 1 else 'Stay'} (Prob: {probability:.2f})")
+        st.success(f"Prediction: {'Leave' if prediction == 1 else 'Stay'}\n (Prob: {probability:.0%})")
