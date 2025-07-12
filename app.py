@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import pydeck as pdk
 import os
 os.environ["MAPBOX_API_KEY"] = "pk.eyJ1Ijoid2lsbGlhbXAzMSIsImEiOiJjbWNxc2w5Mmcwa2tyMmpxMTB3aGxnOHg1In0.jHfWqLwGh_sFRuObzNtA1g"
+from PIL import Image
+import json
 
 # Load model and preprocessor
 rent_model = joblib.load("Regression_model.pkl")
@@ -16,7 +18,7 @@ attrition_preprocessor = joblib.load("attrition_preprocessor.pkl")
 st.set_page_config(page_title="AI Decision App", layout="wide")
 
 # Tabs
-tab1, tab2 = st.tabs(["🏠 SmartRent Finder", "🧑‍💼 Employee Attrition Predictor"])
+tab1, tab2, tab3 = st.tabs(["SmartRent Finder", "Employee Attrition Predictor","Employee Attrition Metrics/Analysis"])
 
 with tab1:
     st.title("🌉 NYC Rent Price Predictor")
@@ -204,3 +206,29 @@ with tab2:
 
         st.success(f"Prediction: {'Leave' if prediction == 1 else 'Stay'}")
         st.success(f"Probability: {probability:.0%}")
+
+with tab3:
+    st.subheader("Confusion Matrix")
+    conf_matrix_img = Image.open("confusion_matrix.png")
+    st.image(conf_matrix_img)
+
+    st.subheader("Precision-Recall Curve")
+    pr_img = Image.open("pr_curve.png")
+    st.image(pr_img)
+
+    st.subheader("SHAP Summary")
+    shap_img = Image.open("shap_summary_plot.png")
+    st.image(shap_img)
+
+    with open("classification_metrics.json", "r") as f:
+        metrics = json.load(f)
+
+    st.header("Classification Report")
+    st.write("**ROC AUC:**", round(metrics['roc_auc'], 4))
+
+    for label in ['0', '1', 'macro avg', 'weighted avg']:
+        st.subheader(f"Class {label}")
+        st.write(f"Precision: {metrics[label]['precision']:.2f}")
+        st.write(f"Recall: {metrics[label]['recall']:.2f}")
+        st.write(f"F1-score: {metrics[label]['f1-score']:.2f}")
+        st.write(f"Support: {metrics[label]['support']}")
