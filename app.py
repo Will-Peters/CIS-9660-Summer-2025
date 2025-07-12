@@ -167,12 +167,12 @@ with tab2:
     st.metric("MAE", f"{mae:.2f}")
     st.metric("Residual Std. Dev", f"{std_resid:.2f}")
 
-    residuals = y_test - y_pred
-    bins = pd.cut(y_pred, bins=np.linspace(min(y_pred), max(y_pred), 10))
+    residuals = np.expm1(y_test) - np.expm1(y_pred)
+    bins = pd.cut(np.expm1(y_pred), bins=np.linspace(np.expm1(min(y_pred)), np.expm1(max(y_pred)), 10))
     std_by_bin = residuals.groupby(bins).std()
 
     fig, ax = plt.subplots()
-    ax.hist(y_pred, bins=10, color='mediumseagreen', edgecolor='black', alpha=0.7)
+    ax.hist(np.expm1(y_pred), bins=10, color='mediumseagreen', edgecolor='black', alpha=0.7)
     ax.set_title("Frequency of Predictions by Price Bin")
     ax.set_xlabel("Predicted Price")
     ax.set_ylabel("Frequency")
