@@ -202,4 +202,5 @@ with tab2:
         prediction = attrition_model.predict(input_processed)[0]
         probability = attrition_model.predict_proba(input_processed)[0][1]
 
-        st.success(f"Prediction: {'Leave' if prediction == 1 else 'Stay'}\n (Prob: {probability:.0%})")
+        st.success(f"Prediction: {'Leave' if prediction == 1 else 'Stay'}")
+        st.success(f"Probability: {probability:.0%}")
