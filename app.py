@@ -82,9 +82,8 @@ with tab1:
         st.success(f"Estimated Rental Price: ${prediction:.2f}")
         beginning = prediction*0.9
         end = prediction*1.1
-        st.success(f"{beginning:.2f} {end:.2f}")
-        st.success(f"{end:.2f}")
-            
+        st.success(f"Range: {beginning:.2f} - {end:.2f}")
+
     st.markdown("____________________________________________________________________________________________________")
     st.markdown("### 📊 Map Visualization")
     st.markdown("____________________________________________________________________________________________________")
