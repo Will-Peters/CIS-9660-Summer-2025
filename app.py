@@ -8,6 +8,8 @@ import os
 os.environ["MAPBOX_API_KEY"] = "pk.eyJ1Ijoid2lsbGlhbXAzMSIsImEiOiJjbWNxc2w5Mmcwa2tyMmpxMTB3aGxnOHg1In0.jHfWqLwGh_sFRuObzNtA1g"
 from PIL import Image
 import json
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+
 
 # Load model and preprocessor
 rent_model = joblib.load("Regression_model.pkl")
@@ -18,7 +20,7 @@ attrition_preprocessor = joblib.load("attrition_preprocessor.pkl")
 st.set_page_config(page_title="AI Decision App", layout="wide")
 
 # Tabs
-tab1, tab2, tab3 = st.tabs(["SmartRent Finder", "Employee Attrition Predictor","Employee Attrition Metrics/Analysis"])
+tab1, tab2, tab3, tab4 = st.tabs(["AirBNB Finder", "AirBNB Finder Metrics", "Employee Attrition Predictor","Employee Attrition Metrics/Analysis"])
 
 with tab1:
     st.title("🌉 NYC Rent Price Predictor")
@@ -145,6 +147,27 @@ with tab1:
     ))
 
 with tab2:
+    xgb_model = joblib.load("xgb_model.pkl")
+    X_test = joblib.load("X_test.pkl")
+    y_test = joblib.load("y_test.pkl")
+
+    # Predict
+    y_pred = xgb_model.predict(X_test)
+    residuals = y_test - y_pred
+
+    # Calculate metrics
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    mae = mean_absolute_error(y_test, y_pred)
+    r2 = r2_score(y_test, y_pred)
+    std_resid = np.std(residuals)
+
+    # Show metrics
+    st.metric("R²", f"{r2:.2f}")
+    st.metric("RMSE", f"{rmse:.2f}")
+    st.metric("MAE", f"{mae:.2f}")
+    st.metric("Residual Std. Dev", f"{std_resid:.2f}")
+
+with tab3:
     st.title("🧑‍💼 Employee Attrition Classifier")
     st.markdown("Predict whether an employee is likely to leave the company.")
 
@@ -152,7 +175,7 @@ with tab2:
     with st.form("attrition_form"): 
         age = st.slider("Age", 18, 60, 30)
         business_travel = st.selectbox("Business Travel", ["Non-Travel", "Travel_Rarely", "Travel_Frequently"])
-        distance_from_home = st.slider("Distance from Home (miles)", 0, 50, 10)
+        distance_from_home = st.slider("Distance from Home (miles)", 0, 30, 5)
         education = st.selectbox("Education Level", [1, 2, 3, 4, 5])  # 1='Below College', 5='Doctor'
         gender = st.selectbox("Gender", ["Male", "Female"])
         job_involvement = st.selectbox("Job Involvement", [1, 2, 3, 4])
@@ -165,7 +188,7 @@ with tab2:
         marital_status = st.selectbox("Marital Status", ["Single", "Married", "Divorced"])
         monthly_income = st.slider("Monthly Income", 1000, 20000, 5000)
         num_companies_worked = st.slider("Number of Companies Worked", 0, 10, 1)
-        percent_salary_hike = st.slider("Percent Salary Hike", 10, 25, 15)
+        percent_salary_hike = st.slider("Percent Salary Hike", 10, 25, 1)
         performance_rating = st.selectbox("Performance Rating", [1, 2, 3, 4])
         relationship_satisfaction = st.selectbox("Relationship Satisfaction", [1, 2, 3, 4])
         work_life_balance = st.selectbox("Work-Life Balance", [1, 2, 3, 4])
@@ -205,9 +228,9 @@ with tab2:
         probability = attrition_model.predict_proba(input_processed)[0][1]
 
         st.success(f"Prediction: {'Leave' if prediction == 1 else 'Stay'}")
-        st.success(f"Probability: {probability:.0%}")
+        st.success(f"Probability of leaving: {probability:.0%}")
 
-with tab3:
+with tab4:
     st.subheader("Confusion Matrix")
     conf_matrix_img = Image.open("confusion_matrix.png")
     st.image(conf_matrix_img)
@@ -222,6 +245,7 @@ with tab3:
 
     with open("classification_metrics.json", "r") as f:
         metrics = json.load(f)
+    st.write(metrics)
 
     st.header("Classification Report")
     st.write("**ROC AUC:**", round(metrics['roc_auc'], 4))
