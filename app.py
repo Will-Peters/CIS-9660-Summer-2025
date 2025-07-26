@@ -19,6 +19,7 @@ openai_key = os.getenv("openai_key")
 fs_api_key = os.getenv("fs_api_key")
 MAPBOX_API_KEY = os.getenv("MAPBOX_API_KEY")
 hf_token = os.getenv("hf")
+google_maps_key = os.getenv("google_maps")
 
 # Load model and preprocessor
 rent_model = joblib.load("Regression_model.pkl")
@@ -278,23 +279,19 @@ with tab4:
         st.write(f"Support: {metrics[label]['support']}")
 
 with tab5:
-    def get_foursquare_attractions(city, limit=10, fs_api_key=fs_api_key):
-        url = "https://api.foursquare.com/v3/places/search"
-        headers = {
-            "Accept": "application/json",
-            "Authorization": fs_api_key,
-        }
+    def get_google_places(city, api_key, limit=10):
+        url = "https://maps.googleapis.com/maps/api/place/textsearch/json"
         params = {
-            "near": city,
-            "categories": "16000",  # Tourist Attractions
-            "limit": limit,
-            "sort": "POPULARITY"
+            "query": f"top tourist attractions in {city}",
+            "key": api_key
         }
-        response = requests.get(url, headers=headers, params=params)
+        response = requests.get(url, params=params)
         if response.status_code != 200:
+            st.error(f"Google API Error {response.status_code}: {response.text}")
             return []
-        data = response.json()
-        return [place["name"] for place in data.get("results", [])]
+    
+        results = response.json().get("results", [])[:limit]
+        return [place["name"] for place in results]
 
     def generate_itinerary_with_hf(city, days, attractions,hf_token=hf_token):
         prompt = (
@@ -316,36 +313,42 @@ with tab5:
     st.title("🌍 AI Travel Itinerary Planner")
     st.write("Enter a destination and trip length to receive a personalized travel plan.")
     st.write("🔐 Foursquare key loaded:", os.getenv("hf"))
-    st.write("🔐 Foursquare key loaded:", os.getenv("fs_api_key"))
+    st.write("🔐 Foursquare key loaded:", os.getenv("google_maps"))
     city = st.text_input("Destination City")
     days = st.number_input("Trip Duration (days)", min_value=1, max_value=14, value=3)
 
     if st.button("Generate Itinerary"):
-        if not city:
-            st.warning("Please fill in all fields.")
+        if not city or not GOOGLE_PLACES_API_KEY or not HF_TOKEN:
+            st.warning("Please provide a city and ensure API keys are loaded.")
         else:
-            with st.spinner("Fetching attractions..."):
-                attractions = get_foursquare_attractions(city, fs_api_key=fs_api_key)
+            with st.spinner("Fetching top attractions..."):
+                attractions = get_google_places(city, GOOGLE_PLACES_API_KEY)
+    
             if not attractions:
-                st.error("No attractions found or invalid API key.")
+                st.error("No attractions found or API failed.")
             else:
-                st.success(f"Top {len(attractions)} attractions found in {city}.")
+                st.success(f"Found {len(attractions)} attractions in {city}")
                 st.write(attractions)
-
-                with st.spinner("Generating itinerary..."):
-                    itinerary = generate_itinerary_with_hf(city, days, attractions)
+    
+                with st.spinner("Generating AI itinerary..."):
+                    itinerary = generate_itinerary_with_hf(city, days, attractions, HF_TOKEN)
+    
                 st.subheader("🧳 Your Personalized Itinerary")
                 st.markdown(itinerary)
+   
     if st.button("Run HF Test"):
         st.write("🔍 Testing Foursquare API...")
         city = "New York"
-        attractions = get_foursquare_attractions(city, limit=5, fs_api_key=fs_api_key)
-        st.write("Attractions found:", attractions)
+        days = 3
     
-        if not attractions:
-            st.error("❌ No attractions found.")
+        print(f"🔍 Testing get_google_places() for: {city}")
+        attractions = get_google_places(city, GOOGLE_PLACES_API_KEY, limit=5)
+        print("✅ Attractions Found:", attractions)
+    
+        if attractions:
+            print("\n🧠 Generating itinerary with Hugging Face...")
+            itinerary = generate_itinerary_with_hf(city, days, attractions, HF_TOKEN)
+            print("\n📋 Generated Itinerary:\n")
+            print(itinerary)
         else:
-            st.success("✅ Attractions successfully fetched.")
-            st.write("🧠 Generating itinerary...")
-            itinerary = generate_itinerary_with_hf(city, 3, attractions, hf_token=hf_token)
-            st.markdown(itinerary)
+            print("❌ No attractions found. Check Google API key or query.")
