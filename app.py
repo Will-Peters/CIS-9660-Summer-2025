@@ -325,8 +325,6 @@ with tab5:
             return f"❌ OpenRouter API Error:\n{str(e)}\n\nRaw Response:\n{response.text}"
     st.title("🌍 AI Travel Itinerary Planner")
     st.write("Enter a destination and trip length to receive a personalized travel plan.")
-    st.write("🔐 Foursquare key loaded:", os.getenv("openrouter"))
-    st.write("🔐 Foursquare key loaded:", os.getenv("google_maps"))
     city = st.text_input("Destination City")
     days = st.number_input("Trip Duration (days)", min_value=1, max_value=14, value=3)
 
