@@ -1,0 +1,4 @@
+Fred Key.txt
+Alphakey.txt
+temp/
+*.log
