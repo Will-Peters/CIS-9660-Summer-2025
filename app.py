@@ -16,8 +16,8 @@ import os
 
 load_dotenv()
 
-openai_key = os.getenv("OPENAI_API_KEY")
-fs_api_key = os.getenv("FOURSQUARE_API_KEY")
+openai_key = os.getenv("openai_key")
+fs_api_key = os.getenv("fs_api_key")
 MAPBOX_API_KEY = os.getenv("MAPBOX_API_KEY")
 
 # Load model and preprocessor
