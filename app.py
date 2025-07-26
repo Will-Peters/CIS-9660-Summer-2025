@@ -333,3 +333,28 @@ with tab5:
                     itinerary = generate_itinerary(city, days, attractions, openai_key)
                 st.subheader("🧳 Your Personalized Itinerary")
                 st.markdown(itinerary)
+    if __name__ == "__main__":
+        from dotenv import load_dotenv
+        import os
+        load_dotenv()
+    
+        fs_api_key = os.getenv("FOURSQUARE_API_KEY")
+        openai_key = os.getenv("OPENAI_API_KEY")
+    
+        # Test get_foursquare_attractions
+        print("🔍 Testing Foursquare API...")
+        city = "New York"
+        attractions = get_foursquare_attractions(city, limit=5)
+        print("Attractions found:", attractions)
+    
+        # Validate result
+        if not attractions:
+            print("❌ No attractions found. Check API key or city name.")
+        else:
+            print("✅ Attractions successfully fetched.")
+    
+        # Test generate_itinerary
+        print("\n🧠 Testing OpenAI Itinerary Generator...")
+        itinerary = generate_itinerary(city, 3, attractions)
+        print("\nGenerated Itinerary:\n")
+        print(itinerary)
