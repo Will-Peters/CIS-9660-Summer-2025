@@ -325,7 +325,7 @@ with tab5:
             st.warning("Please fill in all fields.")
         else:
             with st.spinner("Fetching attractions..."):
-                attractions = get_foursquare_attractions(city, fs_api_key)
+                attractions = get_foursquare_attractions(city, fs_api_key=fs_api_key)
             if not attractions:
                 st.error("No attractions found or invalid API key.")
             else:
@@ -339,7 +339,7 @@ with tab5:
     if st.button("Run HF Test"):
         st.write("🔍 Testing Foursquare API...")
         city = "New York"
-        attractions = get_foursquare_attractions(city, limit=5)
+        attractions = get_foursquare_attractions(city, limit=5, fs_api_key=fs_api_key)
         st.write("Attractions found:", attractions)
     
         if not attractions:
@@ -347,5 +347,5 @@ with tab5:
         else:
             st.success("✅ Attractions successfully fetched.")
             st.write("🧠 Generating itinerary...")
-            itinerary = generate_itinerary_hf(city, 3, attractions, hf_token)
+            itinerary = generate_itinerary_hf(city, 3, attractions, hf_token=hf_token)
             st.markdown(itinerary)
