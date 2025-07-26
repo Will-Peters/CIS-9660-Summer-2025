@@ -303,7 +303,7 @@ with tab5:
             f"Distribute them across the days with suggested timing, meals, and tips."
         )
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4.1",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
         )
