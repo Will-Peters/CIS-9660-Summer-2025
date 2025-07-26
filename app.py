@@ -18,6 +18,7 @@ load_dotenv()
 openai_key = os.getenv("openai_key")
 fs_api_key = os.getenv("fs_api_key")
 MAPBOX_API_KEY = os.getenv("MAPBOX_API_KEY")
+hf_token = os.getenv("hf")
 
 # Load model and preprocessor
 rent_model = joblib.load("Regression_model.pkl")
@@ -295,23 +296,26 @@ with tab5:
         data = response.json()
         return [place["name"] for place in data.get("results", [])]
 
-    def generate_itinerary(city, days, attractions):
-        client = OpenAI(api_key=openai_key)
+    def generate_itinerary_with_hf(city, days, attractions):
         prompt = (
             f"Create a detailed {days}-day travel itinerary for {city}. "
-            f"Include visits to these attractions: {', '.join(attractions)}. "
-            f"Distribute them across the days with suggested timing, meals, and tips."
+            f"Include: {', '.join(attractions)}. Include timing, meals, and local tips."
         )
-        response = client.chat.completions.create(
-            model="gpt-4.1",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.7,
+        headers = {"Authorization": f"Bearer {hf_token}"}
+        payload = {
+            "inputs": prompt,
+            "parameters": {"temperature": 0.7, "max_new_tokens": 500},
+        }
+        response = requests.post(
+            "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1",
+            headers=headers,
+            json=payload
         )
-        return response.choices[0].message.content
+        return response.json()[0]["generated_text"]
 
     st.title("🌍 AI Travel Itinerary Planner")
     st.write("Enter a destination and trip length to receive a personalized travel plan.")
-    st.write("🔐 Foursquare key loaded:", os.getenv("openai_key"))
+    st.write("🔐 Foursquare key loaded:", os.getenv("hf"))
     st.write("🔐 Foursquare key loaded:", os.getenv("fs_api_key"))
     city = st.text_input("Destination City")
     days = st.number_input("Trip Duration (days)", min_value=1, max_value=14, value=3)
@@ -333,27 +337,20 @@ with tab5:
                 st.subheader("🧳 Your Personalized Itinerary")
                 st.markdown(itinerary)
     if __name__ == "__main__":
-        from dotenv import load_dotenv
-        import os
-        load_dotenv()
-    
-        fs_api_key = os.getenv("fs_api_key")
-        openai_key = os.getenv("openai_key")
-    
+  
         # Test get_foursquare_attractions
         print("🔍 Testing Foursquare API...")
         city = "New York"
         attractions = get_foursquare_attractions(city, limit=5)
         print("Attractions found:", attractions)
     
-        # Validate result
         if not attractions:
             print("❌ No attractions found. Check API key or city name.")
         else:
             print("✅ Attractions successfully fetched.")
     
-        # Test generate_itinerary
-        print("\n🧠 Testing OpenAI Itinerary Generator...")
-        itinerary = generate_itinerary(city, 3, attractions)
-        print("\nGenerated Itinerary:\n")
-        print(itinerary)
+            # Test Hugging Face itinerary generation
+            print("\n🧠 Testing Hugging Face Itinerary Generator...")
+            itinerary = generate_itinerary_hf(city, 3, attractions, hf_token)
+            print("\nGenerated Itinerary:\n")
+            print(itinerary)
