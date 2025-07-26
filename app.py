@@ -20,6 +20,7 @@ fs_api_key = os.getenv("fs_api_key")
 MAPBOX_API_KEY = os.getenv("MAPBOX_API_KEY")
 hf_token = os.getenv("hf")
 google_maps_key = os.getenv("google_maps")
+openrouter_key = os.getenv("openrouter")
 
 # Load model and preprocessor
 rent_model = joblib.load("Regression_model.pkl")
@@ -293,34 +294,38 @@ with tab5:
         results = response.json().get("results", [])[:limit]
         return [place["name"] for place in results]
 
-    def generate_itinerary_with_hf(city, days, attractions, hf_token=hf_token):
+    def generate_itinerary_with_openrouter(city, days, attractions, openrouter_key):
         prompt = (
             f"Create a detailed {days}-day travel itinerary for {city}. "
             f"Include: {', '.join(attractions)}. Include timing, meals, and local tips."
         )
-        headers = {"Authorization": f"Bearer {hf_token}"}
-        payload = {
-            "inputs": prompt,
-            "parameters": {"temperature": 0.7, "max_new_tokens": 500},
+    
+        headers = {
+            "Authorization": f"Bearer {openrouter_key}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://yourapp.com",   # Optional but recommended
+            "X-Title": "AI Travel Itinerary Planner"
         }
     
-        response = requests.post(
-            "https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct",
-            headers=headers,
-            json=payload
-        )
+        payload = {
+            "model": "mistralai/mistral-7b-instruct:free",  # You can swap this to any supported model
+            "messages": [
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.7,
+            "max_tokens": 500
+        }
     
         try:
-            output = response.json()
-            if isinstance(output, list) and "generated_text" in output[0]:
-                return output[0]["generated_text"]
-            else:
-                return f"⚠️ Unexpected response:\n{output}"
+            response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload)
+            response.raise_for_status()
+            content = response.json()["choices"][0]["message"]["content"]
+            return content
         except Exception as e:
-            return f"❌ Hugging Face API Error:\n{str(e)}\n\nRaw Response:\n{response.text}"
+            return f"❌ OpenRouter API Error:\n{str(e)}\n\nRaw Response:\n{response.text}"
     st.title("🌍 AI Travel Itinerary Planner")
     st.write("Enter a destination and trip length to receive a personalized travel plan.")
-    st.write("🔐 Foursquare key loaded:", os.getenv("hf"))
+    st.write("🔐 Foursquare key loaded:", os.getenv("openrouter"))
     st.write("🔐 Foursquare key loaded:", os.getenv("google_maps"))
     city = st.text_input("Destination City")
     days = st.number_input("Trip Duration (days)", min_value=1, max_value=14, value=3)
@@ -339,7 +344,7 @@ with tab5:
                 st.write(attractions)
     
                 with st.spinner("Generating AI itinerary..."):
-                    itinerary = generate_itinerary_with_hf(city, days, attractions, hf_token)
+                    itinerary = generate_itinerary_with_openrouter(city, days, attractions, openrouter_key)
                 
                 st.subheader("🧳 Your Personalized Itinerary")
                 st.write("📦 Raw itinerary result:")
