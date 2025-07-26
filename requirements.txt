@@ -5,4 +5,5 @@ xgboost
 matplotlib
 joblib
 pydeck
-
+openai
+requests

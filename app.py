@@ -9,6 +9,8 @@ os.environ["MAPBOX_API_KEY"] = "pk.eyJ1Ijoid2lsbGlhbXAzMSIsImEiOiJjbWNxc2w5Mmcwa
 from PIL import Image
 import json
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+import requests
+import openai
 
 
 # Load model and preprocessor
@@ -20,7 +22,7 @@ attrition_preprocessor = joblib.load("attrition_preprocessor.pkl")
 st.set_page_config(page_title="AI Decision App", layout="wide")
 
 # Tabs
-tab1, tab2, tab3, tab4 = st.tabs(["AirBNB Finder", "AirBNB Finder Metrics", "Employee Attrition Predictor","Employee Attrition Metrics/Analysis"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["AirBNB Finder", "AirBNB Finder Metrics", "Employee Attrition Predictor","Employee Attrition Metrics/Analysis", "AI Travel Itinerary Planner"])
 
 with tab1:
     st.title("🌉 NYC Rent Price Predictor")
@@ -267,3 +269,61 @@ with tab4:
         st.write(f"Recall: {metrics[label]['recall']:.2f}")
         st.write(f"F1-score: {metrics[label]['f1-score']:.2f}")
         st.write(f"Support: {metrics[label]['support']}")
+
+with tab5:
+    def get_foursquare_attractions(city, api_key, limit=10):
+        url = "https://api.foursquare.com/v3/places/search"
+        headers = {
+            "Accept": "application/json",
+            "Authorization": api_key,
+        }
+        params = {
+            "near": city,
+            "categories": "16000",  # Tourist Attractions
+            "limit": limit,
+            "sort": "POPULARITY"
+        }
+        response = requests.get(url, headers=headers, params=params)
+        if response.status_code != 200:
+            return []
+        data = response.json()
+        return [place["name"] for place in data.get("results", [])]
+
+    def generate_itinerary(city, days, attractions, openai_key):
+        openai.api_key = openai_key
+        prompt = (
+            f"Create a detailed {days}-day travel itinerary for {city}. "
+            f"Include visits to these attractions: {', '.join(attractions)}. "
+            f"Distribute them across the days with suggested timing, meals, and tips."
+        )
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+        )
+        return response.choices[0].message.content
+
+    st.title("🌍 AI Travel Itinerary Planner")
+    st.write("Enter a destination and trip length to receive a personalized travel plan.")
+
+    city = st.text_input("Destination City")
+    days = st.number_input("Trip Duration (days)", min_value=1, max_value=14, value=3)
+    fs_api_key = st.text_input("Foursquare API Key", type="password")
+    openai_key = st.text_input("OpenAI API Key", type="password")
+
+    if st.button("Generate Itinerary"):
+        if not city or not fs_api_key or not openai_key:
+            st.warning("Please fill in all fields.")
+        else:
+            with st.spinner("Fetching attractions..."):
+                attractions = get_foursquare_attractions(city, fs_api_key)
+            if not attractions:
+                st.error("No attractions found or invalid API key.")
+            else:
+                st.success(f"Top {len(attractions)} attractions found in {city}.")
+                st.write(attractions)
+
+                with st.spinner("Generating itinerary..."):
+                    itinerary = generate_itinerary(city, days, attractions, openai_key)
+                st.subheader("🧳 Your Personalized Itinerary")
+                st.markdown(itinerary)
