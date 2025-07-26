@@ -11,6 +11,13 @@ import json
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import requests
 import openai
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+openai_key = os.getenv("OPENAI_API_KEY")
+fs_api_key = os.getenv("FOURSQUARE_API_KEY")
 
 
 # Load model and preprocessor
