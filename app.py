@@ -18,7 +18,7 @@ load_dotenv()
 
 openai_key = os.getenv("OPENAI_API_KEY")
 fs_api_key = os.getenv("FOURSQUARE_API_KEY")
-
+MAPBOX_API_KEY = os.getenv("MAPBOX_API_KEY")
 
 # Load model and preprocessor
 rent_model = joblib.load("Regression_model.pkl")
@@ -278,11 +278,11 @@ with tab4:
         st.write(f"Support: {metrics[label]['support']}")
 
 with tab5:
-    def get_foursquare_attractions(city, api_key, limit=10):
+    def get_foursquare_attractions(city, limit=10):
         url = "https://api.foursquare.com/v3/places/search"
         headers = {
             "Accept": "application/json",
-            "Authorization": api_key,
+            "Authorization": fs_api_key,
         }
         params = {
             "near": city,
@@ -296,7 +296,7 @@ with tab5:
         data = response.json()
         return [place["name"] for place in data.get("results", [])]
 
-    def generate_itinerary(city, days, attractions, openai_key):
+    def generate_itinerary(city, days, attractions):
         openai.api_key = openai_key
         prompt = (
             f"Create a detailed {days}-day travel itinerary for {city}. "
@@ -315,11 +315,9 @@ with tab5:
 
     city = st.text_input("Destination City")
     days = st.number_input("Trip Duration (days)", min_value=1, max_value=14, value=3)
-    fs_api_key = st.text_input("Foursquare API Key", type="password")
-    openai_key = st.text_input("OpenAI API Key", type="password")
 
     if st.button("Generate Itinerary"):
-        if not city or not fs_api_key or not openai_key:
+        if not city:
             st.warning("Please fill in all fields.")
         else:
             with st.spinner("Fetching attractions..."):
