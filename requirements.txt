@@ -5,6 +5,6 @@ xgboost
 matplotlib
 joblib
 pydeck
-openai
+openai>=1.0.0
 requests
 python-dotenv
