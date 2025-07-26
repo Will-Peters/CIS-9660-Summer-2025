@@ -278,7 +278,7 @@ with tab4:
         st.write(f"Support: {metrics[label]['support']}")
 
 with tab5:
-    def get_foursquare_attractions(city, limit=10):
+    def get_foursquare_attractions(city, limit=10, fs_api_key=fs_api_key):
         url = "https://api.foursquare.com/v3/places/search"
         headers = {
             "Accept": "application/json",
@@ -296,7 +296,7 @@ with tab5:
         data = response.json()
         return [place["name"] for place in data.get("results", [])]
 
-    def generate_itinerary_with_hf(city, days, attractions):
+    def generate_itinerary_with_hf(city, days, attractions,hf_token=hf_token):
         prompt = (
             f"Create a detailed {days}-day travel itinerary for {city}. "
             f"Include: {', '.join(attractions)}. Include timing, meals, and local tips."
