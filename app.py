@@ -333,7 +333,7 @@ with tab5:
                 st.write(attractions)
 
                 with st.spinner("Generating itinerary..."):
-                    itinerary = generate_itinerary(city, days, attractions)
+                    itinerary = generate_itinerary_with_hf(city, days, attractions)
                 st.subheader("🧳 Your Personalized Itinerary")
                 st.markdown(itinerary)
     if st.button("Run HF Test"):
@@ -347,5 +347,5 @@ with tab5:
         else:
             st.success("✅ Attractions successfully fetched.")
             st.write("🧠 Generating itinerary...")
-            itinerary = generate_itinerary_hf(city, 3, attractions, hf_token=hf_token)
+            itinerary = generate_itinerary_with_hf(city, 3, attractions, hf_token=hf_token)
             st.markdown(itinerary)
