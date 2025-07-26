@@ -318,11 +318,11 @@ with tab5:
     days = st.number_input("Trip Duration (days)", min_value=1, max_value=14, value=3)
 
     if st.button("Generate Itinerary"):
-        if not city or not GOOGLE_PLACES_API_KEY or not HF_TOKEN:
+        if not city or not google_maps_key or not hf_token:
             st.warning("Please provide a city and ensure API keys are loaded.")
         else:
             with st.spinner("Fetching top attractions..."):
-                attractions = get_google_places(city, GOOGLE_PLACES_API_KEY)
+                attractions = get_google_places(city, google_maps_key)
     
             if not attractions:
                 st.error("No attractions found or API failed.")
@@ -331,23 +331,23 @@ with tab5:
                 st.write(attractions)
     
                 with st.spinner("Generating AI itinerary..."):
-                    itinerary = generate_itinerary_with_hf(city, days, attractions, HF_TOKEN)
+                    itinerary = generate_itinerary_with_hf(city, days, attractions, hf_token)
     
                 st.subheader("🧳 Your Personalized Itinerary")
                 st.markdown(itinerary)
    
-    if st.button("Run HF Test"):
-        st.write("🔍 Testing Foursquare API...")
+    if st.button("Run GM Test"):
+        
         city = "New York"
         days = 3
     
         print(f"🔍 Testing get_google_places() for: {city}")
-        attractions = get_google_places(city, GOOGLE_PLACES_API_KEY, limit=5)
+        attractions = get_google_places(city, google_maps_key, limit=5)
         print("✅ Attractions Found:", attractions)
     
         if attractions:
             print("\n🧠 Generating itinerary with Hugging Face...")
-            itinerary = generate_itinerary_with_hf(city, days, attractions, HF_TOKEN)
+            itinerary = generate_itinerary_with_hf(city, days, attractions, hf_token)
             print("\n📋 Generated Itinerary:\n")
             print(itinerary)
         else:
