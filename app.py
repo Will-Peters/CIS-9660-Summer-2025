@@ -336,21 +336,16 @@ with tab5:
                     itinerary = generate_itinerary(city, days, attractions)
                 st.subheader("🧳 Your Personalized Itinerary")
                 st.markdown(itinerary)
-    if __name__ == "__main__":
-  
-        # Test get_foursquare_attractions
-        print("🔍 Testing Foursquare API...")
+    if st.button("Run HF Test"):
+        st.write("🔍 Testing Foursquare API...")
         city = "New York"
         attractions = get_foursquare_attractions(city, limit=5)
-        print("Attractions found:", attractions)
+        st.write("Attractions found:", attractions)
     
         if not attractions:
-            print("❌ No attractions found. Check API key or city name.")
+            st.error("❌ No attractions found.")
         else:
-            print("✅ Attractions successfully fetched.")
-    
-            # Test Hugging Face itinerary generation
-            print("\n🧠 Testing Hugging Face Itinerary Generator...")
+            st.success("✅ Attractions successfully fetched.")
+            st.write("🧠 Generating itinerary...")
             itinerary = generate_itinerary_hf(city, 3, attractions, hf_token)
-            print("\nGenerated Itinerary:\n")
-            print(itinerary)
+            st.markdown(itinerary)
