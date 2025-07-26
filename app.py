@@ -329,7 +329,7 @@ with tab5:
                 st.write(attractions)
 
                 with st.spinner("Generating itinerary..."):
-                    itinerary = generate_itinerary(city, days, attractions, openai_key)
+                    itinerary = generate_itinerary(city, days, attractions)
                 st.subheader("🧳 Your Personalized Itinerary")
                 st.markdown(itinerary)
     if __name__ == "__main__":
