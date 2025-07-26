@@ -305,7 +305,7 @@ with tab5:
         }
     
         response = requests.post(
-            "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1",
+            "https://api-inference.huggingface.co/models/google/flan-t5-large",
             headers=headers,
             json=payload
         )
