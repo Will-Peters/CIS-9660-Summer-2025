@@ -345,6 +345,4 @@ with tab5:
     
                 with st.spinner("Generating AI itinerary..."):
                     itinerary = generate_itinerary_with_openrouter(city, days, attractions, openrouter_key)
-
-                st.text(itinerary)  # force plain output to debug
                 st.markdown(itinerary)
