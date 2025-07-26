@@ -338,8 +338,8 @@ with tab5:
         import os
         load_dotenv()
     
-        fs_api_key = os.getenv("FOURSQUARE_API_KEY")
-        openai_key = os.getenv("OPENAI_API_KEY")
+        fs_api_key = os.getenv("fs_api_key")
+        openai_key = os.getenv("openai_key")
     
         # Test get_foursquare_attractions
         print("🔍 Testing Foursquare API...")
