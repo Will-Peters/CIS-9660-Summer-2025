@@ -10,7 +10,7 @@ from PIL import Image
 import json
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import requests
-import openai
+from openai import OpenAI
 from dotenv import load_dotenv
 import os
 
@@ -297,13 +297,13 @@ with tab5:
         return [place["name"] for place in data.get("results", [])]
 
     def generate_itinerary(city, days, attractions):
-        openai.api_key = openai_key
+        client = OpenAI(api_key=openai_key)
         prompt = (
             f"Create a detailed {days}-day travel itinerary for {city}. "
             f"Include visits to these attractions: {', '.join(attractions)}. "
             f"Distribute them across the days with suggested timing, meals, and tips."
         )
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-4",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
