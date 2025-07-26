@@ -308,7 +308,7 @@ with tab5:
         }
     
         payload = {
-            "model": "mistralai/mistral-7b-instruct:free",  # You can swap this to any supported model
+            "model": "openai/gpt-3.5-turbo",  # You can swap this to any supported model
             "messages": [
                 {"role": "user", "content": prompt}
             ],
@@ -345,8 +345,6 @@ with tab5:
     
                 with st.spinner("Generating AI itinerary..."):
                     itinerary = generate_itinerary_with_openrouter(city, days, attractions, openrouter_key)
-                
-                st.subheader("🧳 Your Personalized Itinerary")
-                st.write("📦 Raw itinerary result:")
+
                 st.text(itinerary)  # force plain output to debug
                 st.markdown(itinerary)
