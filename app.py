@@ -293,7 +293,7 @@ with tab5:
         results = response.json().get("results", [])[:limit]
         return [place["name"] for place in results]
 
-    def generate_itinerary_with_hf(city, days, attractions,hf_token=hf_token):
+    def generate_itinerary_with_hf(city, days, attractions, hf_token=hf_token):
         prompt = (
             f"Create a detailed {days}-day travel itinerary for {city}. "
             f"Include: {', '.join(attractions)}. Include timing, meals, and local tips."
@@ -303,13 +303,21 @@ with tab5:
             "inputs": prompt,
             "parameters": {"temperature": 0.7, "max_new_tokens": 500},
         }
+    
         response = requests.post(
             "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1",
             headers=headers,
             json=payload
         )
-        return response.json()[0]["generated_text"]
-
+    
+        try:
+            output = response.json()
+            if isinstance(output, list) and "generated_text" in output[0]:
+                return output[0]["generated_text"]
+            else:
+                return f"⚠️ Unexpected response:\n{output}"
+        except Exception as e:
+            return f"❌ Hugging Face API Error:\n{str(e)}\n\nRaw Response:\n{response.text}"
     st.title("🌍 AI Travel Itinerary Planner")
     st.write("Enter a destination and trip length to receive a personalized travel plan.")
     st.write("🔐 Foursquare key loaded:", os.getenv("hf"))
@@ -332,23 +340,8 @@ with tab5:
     
                 with st.spinner("Generating AI itinerary..."):
                     itinerary = generate_itinerary_with_hf(city, days, attractions, hf_token)
-    
+                
                 st.subheader("🧳 Your Personalized Itinerary")
+                st.write("📦 Raw itinerary result:")
+                st.text(itinerary)  # force plain output to debug
                 st.markdown(itinerary)
-   
-    if st.button("Run GM Test"):
-        
-        city = "New York"
-        days = 3
-    
-        print(f"🔍 Testing get_google_places() for: {city}")
-        attractions = get_google_places(city, google_maps_key, limit=5)
-        print("✅ Attractions Found:", attractions)
-    
-        if attractions:
-            print("\n🧠 Generating itinerary with Hugging Face...")
-            itinerary = generate_itinerary_with_hf(city, days, attractions, hf_token)
-            print("\n📋 Generated Itinerary:\n")
-            print(itinerary)
-        else:
-            print("❌ No attractions found. Check Google API key or query.")
