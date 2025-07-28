@@ -261,10 +261,6 @@ with tab4:
     pr_img = Image.open("pr_curve.png")
     st.image(pr_img)
 
-    st.subheader("SHAP Summary")
-    shap_img = Image.open("shap_summary_plot.png")
-    st.image(shap_img)
-
     with open("classification_metrics.json", "r") as f:
         metrics = json.load(f)
     st.write(metrics)
