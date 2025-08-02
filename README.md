@@ -2,7 +2,7 @@
 
 # 🌍 AI Travel Itinerary Planner
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://cis-9660-will-apps.streamlit.streamlit.app)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://cis-9660-will-apps.streamlit.app)
 
 A Streamlit web application that creates personalized **multi-day travel itineraries** using:
 
