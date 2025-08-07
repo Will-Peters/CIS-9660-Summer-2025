@@ -268,12 +268,28 @@ with tab4:
     st.header("Classification Report")
     st.write("**ROC AUC:**", round(metrics['roc_auc'], 4))
 
+    st.subheader("ROC Curves")
+    ROC_Curves_img = Image.open("ROC Curves.png")
+    st.image(ROC_Curves_img)
+
+    st.subheader("Evaluation Metrics")
+    Evaluation_Metrics = Image.open("Evaluation Metrics.png")
+    st.image(Evaluation_Metrics)
+
     for label in ['0', '1', 'macro avg', 'weighted avg']:
         st.subheader(f"Class {label}")
         st.write(f"Precision: {metrics[label]['precision']:.2f}")
         st.write(f"Recall: {metrics[label]['recall']:.2f}")
         st.write(f"F1-score: {metrics[label]['f1-score']:.2f}")
         st.write(f"Support: {metrics[label]['support']}")
+
+    st.subheader("Accuracy Comparison")
+    Accuracy_Comparison = Image.open("Accuracy Comparison.png")
+    st.image(Accuracy_Comparison)
+    
+    st.subheader("Elbow Method K-Means")
+    Elbow_Method = Image.open("Elbow_Method.png")
+    st.image(Elbow_Method)
 
 with tab5:
     def get_google_places(city, api_key, limit=10):
