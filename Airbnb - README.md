@@ -22,4 +22,4 @@ For the dependencies you will see them present in the requirements.txt on this g
 
 The website is designed to be two fold:
 1. You can predict how much your Airbnb cost should be given the factors that go into pricing a property.
-2. Analyse the average cost by bedrooms for each neighborhood to get a better understanding of the ecosyste,
+2. Analyse the average cost by bedrooms for each neighborhood to get a better understanding of the ecosystem.
