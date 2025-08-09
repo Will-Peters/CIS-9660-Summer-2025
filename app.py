@@ -276,6 +276,14 @@ with tab4:
     Evaluation_Metrics = Image.open("Evaluation Metrics.png")
     st.image(Evaluation_Metrics)
 
+    st.subheader("5_Fold Accuracy")
+    "5_Fold" = Image.open("5_fold Accuracy.png")
+    st.image("5_Fold")
+
+    st.subheader("Box_Plot")
+    Box_Plot = Image.open("Box_Plot 5_fold.png")
+    st.image(Box_Plot)
+
     for label in ['0', '1', 'macro avg', 'weighted avg']:
         st.subheader(f"Class {label}")
         st.write(f"Precision: {metrics[label]['precision']:.2f}")
